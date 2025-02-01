@@ -5,78 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life Insurance Quiz Bot</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        #quiz-container { background: white; padding: 20px; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        .question { font-size: 18px; margin-bottom: 15px; }
-        .option { display: block; margin: 8px 0; padding: 10px; background-color: #e0e0e0; border-radius: 4px; cursor: pointer; }
-        .option:hover { background-color: #d0d0d0; }
-        #result { margin-top: 20px; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .quiz-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
-    <div id="quiz-container">
-        <div id="quiz"></div>
-        <div id="result"></div>
-    </div>
+    <div class="quiz-container" id="quiz"></div>
 
     <script>
         const questions = [
-            { 
-                question: "What’s your biggest financial concern?", 
-                options: ["Protecting my assets", "Ensuring a comfortable retirement", "Securing my business continuity"], 
-                key: "concern" 
+            {
+                question: "What’s your current financial goal?",
+                options: ["Buying property", "Planning for retirement", "Growing my business", "Protecting my assets", "Ensuring a comfortable retirement", "Securing my business continuity"],
+                key: "goal"
             },
-            { 
-                question: "How soon do you want to achieve your goal?", 
-                options: ["Within the next year", "In 3-5 years", "Long-term, over 5 years"], 
-                key: "timeline" 
+            {
+                question: "How soon do you want to achieve your goal?",
+                options: ["Within the next year", "In 3-5 years", "Long-term, over 5 years"],
+                key: "timeline"
             }
         ];
 
-        let currentQuestion = 0;
         let answers = {};
 
-        function showQuestion() {
-            const quizContainer = document.getElementById('quiz');
-            quizContainer.innerHTML = '';
+        function showQuestion(index) {
+            if (index < questions.length) {
+                const current = questions[index];
+                let optionsHTML = current.options.map(option => 
+                    `<button onclick="answerQuestion('${current.key}', '${option}', ${index + 1})">${option}</button>`
+                ).join('');
 
-            if (currentQuestion < questions.length) {
-                const q = questions[currentQuestion];
-                const questionElement = document.createElement('div');
-                questionElement.className = 'question';
-                questionElement.textContent = q.question;
-
-                quizContainer.appendChild(questionElement);
-
-                q.options.forEach(option => {
-                    const optionElement = document.createElement('div');
-                    optionElement.className = 'option';
-                    optionElement.textContent = option;
-                    optionElement.onclick = () => selectOption(q.key, option);
-                    quizContainer.appendChild(optionElement);
-                });
+                document.getElementById("quiz").innerHTML = `
+                    <h2>${current.question}</h2>
+                    ${optionsHTML}
+                `;
             } else {
-                showResult();
+                showResults();
             }
         }
 
-        function selectOption(key, option) {
-            answers[key] = option;
-            currentQuestion++;
-            showQuestion();
+        function answerQuestion(key, value, nextIndex) {
+            answers[key] = value;
+            showQuestion(nextIndex);
         }
 
-        function showResult() {
-            const resultContainer = document.getElementById('result');
-            resultContainer.innerHTML = `Thank you for completing the quiz! Here are your answers:<br><br>`;
+        function showResults() {
+            let message = "";
 
-            for (let key in answers) {
-                resultContainer.innerHTML += `<strong>${key}:</strong> ${answers[key]}<br>`;
+            if (answers.goal === "Buying property") {
+                message = "Consider life insurance options that protect your property investment and family.";
+            } else if (answers.goal === "Growing my business") {
+                message = "Look into business protection plans to ensure continuity and financial growth.";
+            } else if (answers.goal === "Planning for retirement") {
+                message = "Explore policies that secure your retirement income and legacy.";
+            } else {
+                message = "Explore various insurance options tailored to your financial goals.";
             }
+
+            document.getElementById("quiz").innerHTML = `
+                <h2>Quiz Results</h2>
+                <p>${message}</p>
+                <p>Interested in personalized advice? <a href="#">Book a free consultation now!</a></p>
+            `;
         }
 
-        // Start the quiz
-        showQuestion();
+        showQuestion(0);
     </script>
 </body>
 </html>
